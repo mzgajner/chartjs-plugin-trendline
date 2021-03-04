@@ -20,7 +20,7 @@ var pluginTrendlineLinear = {
                 yScale = chartInstance.scales[axis];
             if ( xScale && yScale ) break;
         }
-        var ctx = chartInstance.chart.ctx;
+        var ctx = chartInstance.ctx;
 
         chartInstance.data.datasets.forEach(function(dataset, index) {
             if (dataset.trendlineLinear && chartInstance.isDatasetVisible(index) && dataset.data.length != 0) {
@@ -43,8 +43,8 @@ function addFitter(datasetMeta, ctx, dataset, xScale, yScale) {
 
     var fitter = new LineFitter();
     var lastIndex = dataset.data.length - 1;
-    var startPos = datasetMeta.data[0]._model.x;
-    var endPos = datasetMeta.data[lastIndex]._model.x;
+    var startPos = datasetMeta.data[0].x;
+    var endPos = datasetMeta.data[lastIndex].x;
 
     var xy = false;
     if ( dataset.data && typeof dataset.data[0] === 'object') xy = true;
@@ -64,7 +64,7 @@ function addFitter(datasetMeta, ctx, dataset, xScale, yScale) {
         else {
             fitter.add(index, data);
         }
-            
+
     });
 
     var x1 = xScale.getPixelForValue(fitter.minx);
@@ -72,7 +72,7 @@ function addFitter(datasetMeta, ctx, dataset, xScale, yScale) {
     var y1 = yScale.getPixelForValue(fitter.f(fitter.minx));
     var y2 = yScale.getPixelForValue(fitter.f(fitter.maxx));
     if ( !xy ) { x1 = startPos; x2 = endPos; }
-    
+
     var drawBottom = datasetMeta.controller.chart.chartArea.bottom;
     var chartWidth = datasetMeta.controller.chart.width;
 
@@ -117,7 +117,7 @@ LineFitter.prototype = {
     'add': function (x, y) {
         x = parseFloat(x);
 		y = parseFloat(y);
-        
+
         this.count++;
         this.sumX += x;
         this.sumX2 += x * x;
@@ -128,7 +128,7 @@ LineFitter.prototype = {
     },
     'f': function (x) {
         x = parseFloat(x);
-        
+
         var det = this.count * this.sumX2 - this.sumX * this.sumX;
         var offset = (this.sumX2 * this.sumY - this.sumX * this.sumXY) / det;
         var scale = (this.count * this.sumXY - this.sumX * this.sumY) / det;
@@ -136,11 +136,4 @@ LineFitter.prototype = {
     }
 };
 
-// If we're in the browser and have access to the global Chart obj, register plugin automatically
-if (typeof window !== "undefined" && window.Chart)
-    window.Chart.plugins.register(pluginTrendlineLinear);
-
-// Otherwise, try to export the plugin
-try {
-    module.exports = exports = pluginTrendlineLinear;
-} catch (e) {}
+export default pluginTrendlineLinear;
