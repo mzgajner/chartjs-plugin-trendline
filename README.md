@@ -1,3 +1,5 @@
+⚠️ The main Sleuth project does not use this dependency anymore, this repo is not maintained. 
+
 # chartjs-plugin-trendline
 
 This plugin draws an linear trendline in your Chart. Made for Chart.js > 2.0
